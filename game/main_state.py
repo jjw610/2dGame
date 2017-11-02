@@ -1,13 +1,9 @@
 import random
 import json
 import os
-
 from pico2d import *
-
 import game_framework
 import title_state
-
-
 
 name = "MainState"
 boy = None
@@ -17,26 +13,24 @@ font = None
 class Human:
 
     RIGHT_RUN, DOWN_RUN, LEFT_RUN, UP_RUN, RIGHT_STAND, DOWN_STAND, LEFT_STAND, UP_STAND = 0, 1, 2, 3, 4, 5, 6, 7
-
-
     def handle_left_run(self):
         if self.x > 0:
-            self.x -= 5
+            self.x -= 6
     def handle_left_stand(self):
         pass
     def handle_right_run(self):
         if self.x < 800:
-            self.x += 5
+            self.x += 6
     def handle_right_stand(self):
         pass
     def handle_up_run(self):
         if self.y < 800:
-            self.y += 5
+            self.y += 6
     def handle_up_stand(self):
         pass
     def handle_down_run(self):
         if self.y > 0:
-            self.y -= 5
+            self.y -= 6
     def handle_down_stand(self):
         pass
 
@@ -74,7 +68,7 @@ def enter():
 
 def exit():
     global human
-    del(Human)
+    del(human)
 
 
 def pause():
@@ -95,22 +89,30 @@ def handle_events():
             if event.key == SDLK_ESCAPE:
                 game_framework.change_state(title_state)
             elif event.key == SDLK_RIGHT:
-                human.state = 0
+                if human.state in (human.DOWN_RUN, human.LEFT_RUN, human.UP_RUN, human.DOWN_STAND, human.UP_STAND, human.RIGHT_STAND, human.LEFT_STAND):
+                    human.state = 0
             elif event.key == SDLK_DOWN:
-                human.state = 1
+                if human.state in (human.LEFT_RUN, human.UP_RUN, human.RIGHT_RUN, human.DOWN_STAND, human.UP_STAND, human.RIGHT_STAND, human.LEFT_STAND):
+                    human.state = 1
             elif event.key == SDLK_LEFT:
-                human.state = 2
+                if human.state in (human.DOWN_RUN, human.UP_RUN, human.RIGHT_RUN, human.DOWN_STAND, human.UP_STAND,human.RIGHT_STAND, human.LEFT_STAND):
+                    human.state = 2
             elif event.key == SDLK_UP:
-                human.state = 3
+                if human.state in (human.DOWN_RUN, human.LEFT_RUN, human.RIGHT_RUN, human.DOWN_STAND, human.UP_STAND,human.RIGHT_STAND, human.LEFT_STAND):
+                    human.state = 3
         elif event.type == SDL_KEYUP:
             if event.key == SDLK_RIGHT:
-                human.state = 4
+                if human.state == human.RIGHT_RUN:
+                    human.state = 4
             elif event.key == SDLK_DOWN:
-                human.state = 5
+                if human.state == human.DOWN_RUN:
+                    human.state = 5
             elif event.key == SDLK_LEFT:
-                human.state = 6
+                if human.state == human.LEFT_RUN:
+                    human.state = 6
             elif event.key == SDLK_UP:
-                human.state = 7
+                if human.state == human.UP_RUN:
+                    human.state = 7
 
 def update():
     human.update()
