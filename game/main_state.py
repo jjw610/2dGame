@@ -13,6 +13,12 @@ class Human:
     def get_bb(self):
         return self.x - 10, self.y - 35, self.x + 12, self.y + 20
 
+    def get_xy(self):
+        return self.x, self.y;
+
+    def get_st(self):
+        return self.state
+
     def draw_bb(self):
         draw_rectangle(*self.get_bb())
 
@@ -21,7 +27,7 @@ class Human:
         self.x, self.y = x, y
         self.frame = 0
         self.image = load_image('image\character\human.png')
-        self.dir = 4
+
 
     def update(self):
         self.frame = (self.frame + 1) % 9
@@ -36,13 +42,17 @@ class Human:
                 self.y = max(40, self.y - 4)
         else:
             if self.state in (self.RIGHT_RUN,):
-                self.x = self.x
+                if self.collideobject != 1:
+                    self.x = min(764, self.x + 4)
             elif self.state in (self.LEFT_RUN,):
-                self.x = self.x
+                if self.collideobject != 3:
+                    self.x = max(32, self.x - 4)
             if self.state in (self.UP_RUN, ):
-                self.y = self.y
+                if self.collideobject != 4:
+                    self.y = min(556, self.y + 4)
             elif self.state in (self.DOWN_RUN, ):
-                self.y = self.y
+                if self.collideobject != 2:
+                    self.y = max(40, self.y - 4)
     def handle_event(self, event):
         if event.type == SDL_KEYDOWN:
             if event.key == SDLK_RIGHT:
@@ -179,35 +189,77 @@ class Object():
     def draw_bb(self):
         draw_rectangle(*self.get_bb())
 
+    def get_xy(self):
+        return self.x, self.y;
 
     def draw(self):
         self.image.draw(self.x,self.y)
 
 def collide(a, b):
+
+    global swt
+    global bf
     left_a, bottom_a, right_a, top_a = a.get_bb()
     left_b, bottom_b, right_b, top_b = b.get_bb()
+    stt = a.get_st()
+
     if left_a > right_b:
+        swt = 0
         return False
     elif right_a < left_b:
+        swt = 0
         return False
     elif top_a < bottom_b:
+        swt = 0
         return False
     elif bottom_a > top_b:
+        swt = 0
         return False
 
+    if stt in (a.RIGHT_RUN, a.RIGHT_STAND):
+        if swt == 0:
+            swt = 1
+            bf = 1
+            return bf
+        else:
+            return bf
+    elif stt in (a.DOWN_RUN, a.DOWN_STAND):
+        if swt == 0:
+            swt = 1
+            bf = 2
+            return bf
+        else:
+            return bf
+    elif stt in (a.LEFT_RUN, a.LEFT_STAND):
+        if swt == 0:
+            swt = 1
+            bf = 3
+            return bf
+        else:
+            return bf
+    elif stt in (a.UP_RUN, a.UP_STAND):
+        if swt == 0:
+            swt = 1
+            bf = 4
+            return bf
+        else:
+            return bf
 
 
-    return True
+
+
+    return False
 
 def enter():
-
+    global swt
+    global bf
     global human
     global background
     global box
     human = Human(50, 500)
     background = BackGround()
     box = Object(3, 400,300 )
-
+    swt = 0
 def exit():
     global human
     global background
@@ -236,11 +288,7 @@ def handle_events():
         else:
             human.handle_event(event)
             pass
-    if collide(human, box):
-        human.collideobject = 1
-    else:
-        human.collideobject = 0
-
+    human.collideobject = collide(human, box)
 
 def update():
 
