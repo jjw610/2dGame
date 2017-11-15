@@ -11,7 +11,7 @@ class Human:
     RIGHT_RUN, DOWN_RUN, LEFT_RUN, UP_RUN, RIGHT_STAND, DOWN_STAND, LEFT_STAND, UP_STAND = 0, 1, 2, 3, 4, 5, 6, 7
     collideobject = 0
     def get_bb(self):
-        return self.x - 10, self.y - 35, self.x + 12, self.y + 20
+        return self.x - 10, self.y - 35, self.x + 12, self.y-25
 
     def get_xy(self):
         return self.x, self.y;
@@ -30,6 +30,7 @@ class Human:
 
 
     def update(self):
+
         self.frame = (self.frame + 1) % 9
         if self.collideobject == 0:
             if self.state in (self.RIGHT_RUN,):
@@ -161,6 +162,7 @@ class Object():
 
     def __init__(self, type, x, y):
         self.obn = type
+        self.col = 0
         self.x, self.y = x, y
         if self.obn == 0:
             self.image = load_image('image\object\oox1-1.png')
@@ -204,49 +206,62 @@ def collide(a, b):
     stt = a.get_st()
 
     if left_a > right_b:
-        swt = 0
+        b.col = 0
+        a.collideobject = 0
         return False
     elif right_a < left_b:
-        swt = 0
+        b.col = 0
+        a.collideobject = 0
         return False
     elif top_a < bottom_b:
-        swt = 0
+        b.col = 0
+        a.collideobject = 0
         return False
     elif bottom_a > top_b:
-        swt = 0
+        b.col = 0
+        a.collideobject = 0
         return False
 
     if stt in (a.RIGHT_RUN, a.RIGHT_STAND):
-        if swt == 0:
-            swt = 1
+        if b.col == 0:
+            print("swt가 0이다!!!1")
+            b.col = 1
             bf = 1
+            print(bf)
             return bf
         else:
+            print(bf)
             return bf
     elif stt in (a.DOWN_RUN, a.DOWN_STAND):
-        if swt == 0:
-            swt = 1
+        if b.col == 0:
+            print("swt가 0이다!!!1")
+            b.col = 1
             bf = 2
+            print(bf)
             return bf
         else:
+            print(bf)
             return bf
     elif stt in (a.LEFT_RUN, a.LEFT_STAND):
-        if swt == 0:
-            swt = 1
+        if b.col == 0:
+            print("swt가 0이다!!!1")
+            b.col = 1
             bf = 3
+            print(bf)
             return bf
         else:
+            print(bf)
             return bf
     elif stt in (a.UP_RUN, a.UP_STAND):
-        if swt == 0:
-            swt = 1
+        if b.col == 0:
+            print("swt가 0이다!!!1")
+            b.col = 1
             bf = 4
+            print(bf)
             return bf
         else:
+            print(bf)
             return bf
-
-
-
 
     return False
 
@@ -255,18 +270,20 @@ def enter():
     global bf
     global human
     global background
-    global box
+    global box1, box2
     human = Human(50, 500)
     background = BackGround()
-    box = Object(3, 400,300 )
+    box1 = Object(0, 400,300 )
+    box2 = Object(0, 100, 200)
     swt = 0
 def exit():
     global human
     global background
-    global box
+    global box1, box2
     del (human)
     del (background)
-    del (box)
+    del (box1)
+    del (box2)
 
 def pause():
     pass
@@ -278,7 +295,7 @@ def resume():
 
 def handle_events():
     global human
-    global box
+    global box1, box2
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
@@ -288,10 +305,13 @@ def handle_events():
         else:
             human.handle_event(event)
             pass
-    human.collideobject = collide(human, box)
+
+    if collide(human, box1):
+        human.collideobject = collide(human, box1)
+    elif collide(human, box2):
+        human.collideobject = collide(human, box2)
 
 def update():
-
     human.update()
     delay(0.03)
 
@@ -299,12 +319,13 @@ def update():
 def draw():
     clear_canvas()
     background.draw()
-    box.draw()
+    box1.draw()
+    box2.draw()
     human.draw()
 
     human.draw_bb()
-    box.draw_bb()
-
+    box1.draw_bb()
+    box2.draw_bb()
 
     update_canvas()
 
