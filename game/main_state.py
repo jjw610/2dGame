@@ -5,7 +5,7 @@ import game_framework
 import ending_state
 from human import Human
 from enemy import Skeleton, Ghost
-from collide import collide
+from collide import collide, raidecollide
 name = "MainState"
 
 
@@ -96,8 +96,8 @@ def handle_events():
     global human
     global box1, box2, box3, box4, box5
     events = get_events()
-    skeleton.handle_event()
-    ghost.handle_event()
+    skeleton.handle_event(human)
+    ghost.handle_event(human)
     for event in events:
         if event.type == SDL_QUIT:
             game_framework.quit()
@@ -107,21 +107,24 @@ def handle_events():
             pass
         human.handle_event(event)
 
+    if raidecollide(human, skeleton):
+        skeleton.attack = raidecollide(human, skeleton)
 
     if collide(human, box1):
-        human.collideobject = collide(human, box1)
+        human.col = collide(human, box1)
     elif collide(human, box2):
-        human.collideobject = collide(human, box2)
+        human.col = collide(human, box2)
     elif collide(human, box3):
-        human.collideobject = collide(human, box3)
+        human.col = collide(human, box3)
     elif collide(human, box4):
-        human.collideobject = collide(human, box4)
+        human.col = collide(human, box4)
     elif collide(human, box5):
-        human.collideobject = collide(human, box5)
+        human.col = collide(human, box5)
     elif collide(human, skeleton):
         game_framework.change_state(ending_state)
     elif collide(human, ghost):
         game_framework.change_state(ending_state)
+
 
 
     # if collide(skeleton, box1):
@@ -160,7 +163,9 @@ def draw():
     box4.draw_bb()
     box5.draw_bb()
     skeleton.draw_bb()
+    skeleton.draw_raider()
     ghost.draw_bb()
+
 
 
     update_canvas()
