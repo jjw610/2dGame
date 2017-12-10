@@ -3,15 +3,20 @@ import random
 from pico2d import *
 import game_framework
 import ending_state
+import second_state
 from human import Human
 from enemy import Skeleton, Ghost
-from collide import collide, raidecollide
+from collide import collide, raidecollide, collidee
+from nextspot import NextSpot
 name = "MainState"
 
 
 class BackGround:
     def __init__(self):
         self.image = load_image('image\ground\state1-1.png')
+        self.bgm = load_music('sound\snormal.wav')
+        self.bgm.set_volume(64)
+        self.bgm.repeat_play()
     def draw(self):
         self.image.draw(400, 300)
 class Object():
@@ -61,20 +66,23 @@ def enter():
     global ghost
     global background
     global box1, box2, box3, box4,box5
+    global nextspot
     human = Human(50, 500)
     skeleton = Skeleton(700, 500)
     ghost = Ghost(400, 300)
     background = BackGround()
-    box1 = Object(3, 146, 408)
+    box1 = Object(3, 306, 488)
     box2 = Object(0, 182, 192)
     box3 = Object(1, 400, 300)
     box4 = Object(4, 474, 148)
     box5 = Object(0, 506, 456)
+    nextspot = NextSpot(660, 20)
 
 def exit():
     global human, skeleton, ghost
     global background
     global box1, box2, box3, box4, box5
+    global nextspot
     del (human)
     del (skeleton)
     del (ghost)
@@ -84,6 +92,7 @@ def exit():
     del (box3)
     del (box4)
     del (box5)
+    del (nextspot)
 
 def pause():
     pass
@@ -95,6 +104,7 @@ def resume():
 def handle_events():
     global human
     global box1, box2, box3, box4, box5
+    global nextspot
     events = get_events()
     skeleton.handle_event(human)
     ghost.handle_event(human)
@@ -107,8 +117,25 @@ def handle_events():
             pass
         human.handle_event(event)
 
+    # if collidee(skeleton, box1):
+    #     skeleton.collideobject = collidee(skeleton, box1)
+    # elif collide(skeleton, box2):
+    #     skeleton.collideobject = collidee(skeleton, box2)
+    # elif collide(skeleton, box3):
+    #     skeleton.collideobject = collidee(skeleton, box3)
+    # elif collide(skeleton, box4):
+    #     skeleton.collideobject = collidee(skeleton, box4)
+    # elif collide(skeleton, box5):
+    #     skeleton.collideobject = collidee(skeleton, box5)
     if raidecollide(human, skeleton):
         skeleton.attack = raidecollide(human, skeleton)
+
+    if raidecollide(human, ghost):
+        ghost.attack = raidecollide(human, ghost)
+
+
+
+
 
     if collide(human, box1):
         human.col = collide(human, box1)
@@ -124,6 +151,8 @@ def handle_events():
         game_framework.change_state(ending_state)
     elif collide(human, ghost):
         game_framework.change_state(ending_state)
+    elif collide(human, nextspot):
+        game_framework.change_state(second_state)
 
 
 
@@ -138,7 +167,7 @@ def handle_events():
 
 def update():
     human.update()
-    skeleton.update()
+    skeleton.update(human)
     ghost.update()
     delay(0.03)
 
@@ -165,6 +194,8 @@ def draw():
     skeleton.draw_bb()
     skeleton.draw_raider()
     ghost.draw_bb()
+    ghost.draw_raider()
+    nextspot.draw_bb()
 
 
 
