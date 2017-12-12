@@ -11,7 +11,10 @@ image = None
 def enter():
     global image
     image = load_image('rsc\Title.png')
-
+    global bgm
+    bgm = load_music('sound\sending.wav')
+    bgm.set_volume(64)
+    bgm.repeat_play()
 
 def exit():
     global image

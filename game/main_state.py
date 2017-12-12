@@ -14,9 +14,6 @@ name = "MainState"
 class BackGround:
     def __init__(self):
         self.image = load_image('image\ground\state1-1.png')
-        self.bgm = load_music('sound\snormal.wav')
-        self.bgm.set_volume(64)
-        self.bgm.repeat_play()
     def draw(self):
         self.image.draw(400, 300)
 class Object():
@@ -77,6 +74,17 @@ def enter():
     box4 = Object(4, 474, 148)
     box5 = Object(0, 506, 456)
     nextspot = NextSpot(660, 20)
+    global bgm
+    bgm = load_music('sound\snormal.wav')
+    bgm.set_volume(64)
+    bgm.repeat_play()
+    global bgm2
+    bgm2 = load_music('sound\sfollow.wav')
+    bgm2.set_volume(64)
+    global c
+    global bgmswt
+    bgmswt = 0
+    c = 0
 
 def exit():
     global human, skeleton, ghost
@@ -102,12 +110,19 @@ def resume():
     pass
 
 def handle_events():
+    global c
+    global bgmswt
     global human
     global box1, box2, box3, box4, box5
     global nextspot
     events = get_events()
     skeleton.handle_event(human)
     ghost.handle_event(human)
+    if c == 1:
+        if bgmswt == 0:
+            bgmswt = 1
+            bgm.stop()
+            bgm2.repeat_play()
     for event in events:
         if event.type == SDL_QUIT:
             game_framework.quit()
@@ -117,17 +132,19 @@ def handle_events():
             pass
         human.handle_event(event)
 
-    # if collidee(skeleton, box1):
-    #     skeleton.collideobject = collidee(skeleton, box1)
-    # elif collide(skeleton, box2):
-    #     skeleton.collideobject = collidee(skeleton, box2)
-    # elif collide(skeleton, box3):
-    #     skeleton.collideobject = collidee(skeleton, box3)
-    # elif collide(skeleton, box4):
-    #     skeleton.collideobject = collidee(skeleton, box4)
-    # elif collide(skeleton, box5):
-    #     skeleton.collideobject = collidee(skeleton, box5)
+    if collidee(skeleton, box1):
+        skeleton.collideobject = collidee(skeleton, box1)
+    elif collidee(skeleton, box2):
+        skeleton.collideobject = collidee(skeleton, box2)
+    elif collidee(skeleton, box3):
+        skeleton.collideobject = collidee(skeleton, box3)
+    elif collidee(skeleton, box4):
+        skeleton.collideobject = collidee(skeleton, box4)
+    elif collidee(skeleton, box5):
+        skeleton.collideobject = collidee(skeleton, box5)
     if raidecollide(human, skeleton):
+        if c == 0:
+            c = 1
         skeleton.attack = raidecollide(human, skeleton)
 
     if raidecollide(human, ghost):
@@ -166,6 +183,7 @@ def handle_events():
     #     skeleton.collideobject = collide(skeleton, box4)
 
 def update():
+
     human.update()
     skeleton.update(human)
     ghost.update()
