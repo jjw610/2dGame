@@ -1,5 +1,3 @@
-import random
-
 from pico2d import *
 import game_framework
 import ending_state
@@ -142,15 +140,15 @@ def handle_events():
         skeleton.collideobject = collidee(skeleton, box4)
     elif collidee(skeleton, box5):
         skeleton.collideobject = collidee(skeleton, box5)
+
+
     if raidecollide(human, skeleton):
         if c == 0:
             c = 1
         skeleton.attack = raidecollide(human, skeleton)
-
-    if raidecollide(human, ghost):
-        ghost.attack = raidecollide(human, ghost)
-
-
+    else:
+        skeleton.attack = 0
+    ghost.attack = raidecollide(human, ghost)
 
 
 
@@ -169,18 +167,8 @@ def handle_events():
     elif collide(human, ghost):
         game_framework.change_state(ending_state)
     elif collide(human, nextspot):
+        bgm.stop()
         game_framework.change_state(second_state)
-
-
-
-    # if collide(skeleton, box1):
-    #     skeleton.collideobject = collide(skeleton, box1)
-    # elif collide(skeleton, box2):
-    #     skeleton.collideobject = collide(skeleton, box2)
-    # elif collide(skeleton, box3):
-    #     skeleton.collideobject = collide(skeleton, box3)
-    # elif collide(skeleton, box4):
-    #     skeleton.collideobject = collide(skeleton, box4)
 
 def update():
 

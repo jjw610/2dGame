@@ -1,6 +1,7 @@
 
 import game_framework
-import main_state
+import prologue_state
+import stage1_state
 from pico2d import *
 
 
@@ -12,9 +13,10 @@ def enter():
     global image
     image = load_image('rsc\Title.png')
     global bgm
-    bgm = load_music('sound\sending.wav')
+    bgm = load_music('sound\stitle.wav')
     bgm.set_volume(64)
     bgm.repeat_play()
+
 
 def exit():
     global image
@@ -30,8 +32,8 @@ def handle_events():
             if (event.type, event.key) == (SDL_KEYDOWN, SDLK_ESCAPE):
                 game_framework.quit()
             elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_SPACE):
-                game_framework.change_state(main_state)
-
+                game_framework.change_state(prologue_state)
+                #game_framework.change_state(stage1_state)
 
 def draw():
     clear_canvas()
